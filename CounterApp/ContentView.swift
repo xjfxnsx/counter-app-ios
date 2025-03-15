@@ -45,9 +45,24 @@ struct ContentView: View {
                 
             }
             .padding()
+            
+            Button(action: {
+                count = 0
+            }) {
+                Text("Reset")
+                    .font(.title)
+                    .padding()
+                    .frame(width: 180, height: 50)
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
+            
+            .padding(.top, 20)
         }
     }
 }
+
 
 #Preview {
     ContentView()
