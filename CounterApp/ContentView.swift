@@ -24,7 +24,7 @@ class SoundManager {
 
 
 struct ContentView: View {
-    @State private var count = 0
+    @State private var count: Int = loadCount()
     @State private var buttonScale: CGFloat = 1.0
     @State private var buttonColor: Color = Color.gray
     let soundManager = SoundManager()
@@ -38,14 +38,14 @@ struct ContentView: View {
             HStack {
                 Button(action: {
                     count -= 1
+                    saveCount()
                     animateButton()
-                    changeColor()
                     soundManager.playSound()
                 }) {
                     Text("-")
                         .font(.largeTitle)
                         .frame(width: 80, height: 80)
-                        .background(buttonColor)
+                        .background(Color.red)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                         .scaleEffect(buttonScale)
@@ -55,14 +55,14 @@ struct ContentView: View {
 
                 Button(action: {
                     count += 1
+                    saveCount()
                     animateButton()
-                    changeColor()
                     soundManager.playSound()
                 }) {
                     Text("+")
                         .font(.largeTitle)
                         .frame(width: 80, height: 80)
-                        .background(buttonColor)
+                        .background(Color.green)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                         .scaleEffect(buttonScale)
@@ -74,8 +74,8 @@ struct ContentView: View {
 
             Button(action: {
                 count = 0
+                saveCount()
                 animateButton()
-                changeColor()
                 soundManager.playSound()
             }) {
                 Text("Reset")
@@ -101,8 +101,32 @@ struct ContentView: View {
 
     }
     
-    func changeColor() {
-        let colors: [Color] = [.red, .blue, .green, .yellow, .orange, .purple]
-        buttonColor = colors.randomElement() ?? .gray
+    
+    func saveCount() {
+        let fileURL = ContentView.getFilePath()
+            do {
+                let data = try JSONEncoder().encode(count)  // Кодируем число в JSON
+                try data.write(to: fileURL)
+            } catch {
+                print("Ошибка сохранения: \(error)")
+            }
+        }
+
+        // Функция загрузки из файла
+        static func loadCount() -> Int {
+            let fileURL = getFilePath()
+            do {
+                let data = try Data(contentsOf: fileURL)
+                return try JSONDecoder().decode(Int.self, from: data)  // Декодируем JSON в Int
+            } catch {
+                print("Ошибка загрузки: \(error)")
+                return 0  // Если ошибка — возвращаем 0
+            }
+        }
+
+        // Получаем путь к файлу
+        static func getFilePath() -> URL {
+            let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            return documentDirectory.appendingPathComponent("count.json")
         }
 }
