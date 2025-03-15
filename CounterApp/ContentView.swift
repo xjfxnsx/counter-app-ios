@@ -22,9 +22,11 @@ class SoundManager {
     }
 }
 
+
 struct ContentView: View {
     @State private var count = 0
     @State private var buttonScale: CGFloat = 1.0
+    @State private var buttonColor: Color = Color.gray
     let soundManager = SoundManager()
 
     var body: some View {
@@ -37,31 +39,35 @@ struct ContentView: View {
                 Button(action: {
                     count -= 1
                     animateButton()
+                    changeColor()
                     soundManager.playSound()
                 }) {
                     Text("-")
                         .font(.largeTitle)
                         .frame(width: 80, height: 80)
-                        .background(Color.red)
+                        .background(buttonColor)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                         .scaleEffect(buttonScale)
                         .animation(.spring(response: 0.3, dampingFraction: 0.5), value: buttonScale)
+                        .animation(.easeInOut(duration: 0.2), value: buttonColor)
                 }
 
                 Button(action: {
                     count += 1
                     animateButton()
+                    changeColor()
                     soundManager.playSound()
                 }) {
                     Text("+")
                         .font(.largeTitle)
                         .frame(width: 80, height: 80)
-                        .background(Color.green)
+                        .background(buttonColor)
                         .foregroundColor(.white)
                         .cornerRadius(10)
                         .scaleEffect(buttonScale)
                         .animation(.spring(response: 0.3, dampingFraction: 0.5), value: buttonScale)
+                        .animation(.easeInOut(duration: 0.2), value: buttonColor)
                 }
             }
             .padding()
@@ -69,6 +75,7 @@ struct ContentView: View {
             Button(action: {
                 count = 0
                 animateButton()
+                changeColor()
                 soundManager.playSound()
             }) {
                 Text("Reset")
@@ -80,6 +87,7 @@ struct ContentView: View {
                     .cornerRadius(10)
                     .scaleEffect(buttonScale)
                     .animation(.spring(response: 0.3, dampingFraction: 0.5), value: buttonScale)
+                    .animation(.easeInOut(duration: 0.2), value: buttonColor)
             }
             .padding(.top, 20)
         }
@@ -90,5 +98,11 @@ struct ContentView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             buttonScale = 1.0
         }
+
     }
+    
+    func changeColor() {
+        let colors: [Color] = [.red, .blue, .green, .yellow, .orange, .purple]
+        buttonColor = colors.randomElement() ?? .gray
+        }
 }
