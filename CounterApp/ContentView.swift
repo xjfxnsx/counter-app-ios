@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct ContentView: View {
     
     @State private var count = 0
+    @State var player: AVAudioPlayer?
     
     var body: some View {
         
@@ -23,6 +25,7 @@ struct ContentView: View {
                 
                 Button(action: {
                     count -= 1
+                    playSound()
                 }) {
                     Text("-")
                         .font(.largeTitle)
@@ -34,6 +37,7 @@ struct ContentView: View {
                 
                 Button(action: {
                     count += 1
+                    playSound()
                 }) {
                     Text("+")
                         .font(.largeTitle)
@@ -48,6 +52,7 @@ struct ContentView: View {
             
             Button(action: {
                 count = 0
+                playSound()
             }) {
                 Text("Reset")
                     .font(.title)
@@ -61,6 +66,17 @@ struct ContentView: View {
             .padding(.top, 20)
         }
     }
+    
+    func playSound() {
+            guard let url = Bundle.main.url(forResource: "click", withExtension: "mp3") else { return }
+
+            do {
+                player = try AVAudioPlayer(contentsOf: url)
+                player?.play()
+            } catch {
+                print("Error Playing Sound")
+            }
+        }
 }
 
 
